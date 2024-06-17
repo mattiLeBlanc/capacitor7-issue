@@ -51,6 +51,8 @@
   </style>
 </head>
 <body>
+
+  <!-- https://korbiniankuhn.medium.com/how-to-avoid-the-angular-white-screen-of-death-a11e31d13633 -->
   <app-root></app-root>
 
     <!-- No javascript message -->
@@ -71,40 +73,63 @@
       </div>
     </div>
 
-    <!-- White screen error handling -->
-    <script>
-      var WHITESCREEN_EMPTY_APP_ROOT_DELAY = 8000;
-      var WHITESCREEN_ERROR_DELAY = 5000;
 
-      // Show white screen error
-      function showWhitescreenError(error) {
-        console.error(error);
-        var whitescreen = document.getElementById("whitescreen");
-        if (whitescreen.style.display !== "block") {
-          var stackErrorEl = document.getElementById("whitescreen-stack");
-          if (error.stack) {
-            stackErrorEl.innerHTML = error.stack.replace(/\n/g, '<br/>');
-          } else {
-            stackErrorEl.innerHTML = JSON.stringify(error);
+
+      <!-- White screen error handling -->
+      <script>
+        var WHITESCREEN_EMPTY_APP_ROOT_DELAY = 8000;
+        var WHITESCREEN_ERROR_DELAY = 5000;
+
+
+        // Show white screen error
+        function showWhitescreenError(error) {
+          console.error(error);
+          var whitescreen = document.getElementById("whitescreen");
+          if (whitescreen.style.display !== "block") {
+            var stackErrorEl = document.getElementById("whitescreen-stack");
+            if (error && error.stack) {
+              stackErrorEl.innerHTML = error.stack.replace(/\n/g, '<br/>');
+            } else {
+              stackErrorEl.innerHTML = JSON.stringify(error);
+            }
+            whitescreen.style.display = "block";
+            document.body.style.display = "block"; // only for ionic
           }
-          whitescreen.style.display = "block";
-          document.body.style.display = "block"; // only for ionic
         }
-      }
 
-      // Handle global errors
-      window.addEventListener("error", function (event) {
-        setTimeout(() => {
-          showWhitescreenError(event.error);
-        }, WHITESCREEN_ERROR_DELAY);
-      });
+        // Handle global errors
+        window.addEventListener("error", function (event) {
+          if (!event.error) {
+            var div = document.createElement("div");
+            div.innerHTML = '[index file]' + event.message  ;
+            document.body.appendChild(div);
+            var div3 = document.createElement("div");
+            div3.innerHTML = '[keys]' + Object.keys(event)  ;
+            document.body.appendChild(div3);
 
-      // Detect empty app-root
-      setTimeout(function () {
-        if (!document.getElementsByTagName("app-root")[0].children.length) {
-          showWhitescreenError(new Error("Empty app-root"));
-        }
-      }, WHITESCREEN_EMPTY_APP_ROOT_DELAY);
-    </script>
+            if (event.filename) {
+              var div2 = document.createElement("div");
+              div2.innerHTML = 'filename ' + event.filename;
+              document.body.appendChild(div2);
+            }
+            if (event.lineno) {
+              var div2 = document.createElement("div");
+              div2.innerHTML = 'lineno ' + event.lineno;
+              document.body.appendChild(div2);
+            }
+          }
+          setTimeout(() => {
+            showWhitescreenError(event.error);
+          }, WHITESCREEN_ERROR_DELAY);
+        });
+
+        // Detect empty app-root
+        setTimeout(function () {
+          if (!document.getElementsByTagName("app-root")[0].children.length) {
+            showWhitescreenError(new Error("Empty app-root"));
+          }
+        }, WHITESCREEN_EMPTY_APP_ROOT_DELAY);
+      </script>
+
 </body>
 </html>
