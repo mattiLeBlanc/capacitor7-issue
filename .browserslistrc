@@ -8,7 +8,7 @@
 # You can see what browsers were selected by your queries by running:
 #   npx browserslist
 
-last 2 Chrome versions
+# last 2 Chrome versions
 last 1 Firefox version
 last 2 Edge major versions
 last 4 Safari major versions
@@ -16,3 +16,4 @@ last 2 iOS major versions
 Firefox ESR
 # Currently at Safari 16, so we support 4 version back to avoid ??= (https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Nullish_coalescing_assignment) being used which is not supported on TV (es2022 feature). So we want to support build in version 13
 Safari >= 13
+Chrome >= 61
